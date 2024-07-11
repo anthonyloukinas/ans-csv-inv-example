@@ -1,0 +1,28 @@
+plugin: csv
+source: "inventories/windows.csv"
+
+# add an attribute to each host based on a conditional
+compose:
+  ansible_become: ansible_network_os == "eos"
+
+# build dynamic groups based on csv columns
+keyed_groups:
+  - key: site
+    prefix: site
+  - key: ansible_network_os
+    prefix: ""
+    separator: ""
+
+# allow the csv to contain `vars:xxx` values which reference these
+vars:
+  ansible_user: "{{ lookup('env', 'ansible_user') }}"
+  ansible_password: "{{ lookup('env', 'ansible_password') }}"
+  ansible_become_pass: "{{ lookup('env', 'ansible_become_pass') }}"
+
+# add an attribute to each host if it's not in the csv
+defaults:
+  ansible_connection: local
+
+# in case the CSV columns don't match what we need
+column_replace:
+  os: ansible_network_os
