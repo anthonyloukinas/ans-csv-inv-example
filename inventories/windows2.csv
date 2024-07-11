@@ -1,3 +1,3 @@
 Owner,ServerTeam,HostName,Agency,System,Status,Environment,CMDB-Support,OS,AdditionalGroups
-aloukinas,ST6,hcv444ppmsdaa02,Transportation,ATMS,Operational,Production,EOC-DOC Server Team 6,Windows,TestGroup1 TestGroup2
-aloukinas,ST6,hcv444ppmsdaa03,Transportation,ATMS,Operational,Production,EOC-DOC Server Team 6,Windows,TestGroup1 TestGroup2
+aloukinas,ST6,hcv444ppmsdaa02,Transportation,ATMS,Operational,Production,EOC-DOC Server Team 6,Windows,IIS
+aloukinas,ST6,hcv444ppmsdaa03,Transportation,ATMS,Operational,Production,EOC-DOC Server Team 6,Windows,MSSQL
