@@ -4,7 +4,7 @@ source: "inventories/windows2.csv"
 
 # add an attribute to each host based on a conditional
 compose:
-  ansible_become: ansible_network_os == "eos"
+  ansible_become: ansible_network_os == "eos" # if ansible_network_os == "eos" then ansible_become: true
 
 # build dynamic groups based on csv columns
 keyed_groups:
@@ -24,9 +24,10 @@ vars:
 
 # add an attribute to each host if it's not in the csv
 defaults:
-  ansible_connection: local
+  ansible_connection: local # Remove this line if you want to connect to the hosts
 
 # in case the CSV columns don't match what we need
+# Example: ColumnValue: AnsibleVariableName
 # column_replace:
-  # os: ansible_network_os
+  # OS: ansible_host
 ...

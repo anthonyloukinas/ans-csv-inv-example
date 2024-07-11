@@ -7,7 +7,6 @@ from ansible.plugins.inventory import (
     expand_hostname_range,
     detect_range,
 )
-# from ansible.inventory.group import to_safe_group_name
 import csv
 
 
@@ -92,14 +91,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 valid = True
         return valid
 
-    # @staticmethod
-    # def custom_sanitization(self, name):
-    #     return to_safe_group_name(name, replacer='')
-
     def parse(self, inventory, loader, path, cache=True):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
-
-        # self._sanitize_group_name = self.custom_sanitization
 
         config = self._read_config_data(path)
         strict = self.get_option("strict")
