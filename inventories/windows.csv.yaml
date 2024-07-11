@@ -1,5 +1,6 @@
+---
 plugin: csv
-source: "inventories/windows.csv"
+source: "inventories/windows2.csv"
 
 # add an attribute to each host based on a conditional
 compose:
@@ -7,9 +8,8 @@ compose:
 
 # build dynamic groups based on csv columns
 keyed_groups:
-  - key: site
-    prefix: site
-  - key: ansible_network_os
+  # {{ PREFIX}} {{ SEPARATOR }} {{ KEY }}
+  - key: ServerTeam
     prefix: ""
     separator: ""
 
@@ -24,5 +24,6 @@ defaults:
   ansible_connection: local
 
 # in case the CSV columns don't match what we need
-column_replace:
-  os: ansible_network_os
+# column_replace:
+  # os: ansible_network_os
+...

@@ -1,9 +1,13 @@
+# csv.py - Ansible Inventory Plugin for CSV files
+# Docs: https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html
+
 from ansible.plugins.inventory import (
     BaseInventoryPlugin,
     Constructable,
     expand_hostname_range,
     detect_range,
 )
+# from ansible.inventory.group import to_safe_group_name
 import csv
 
 
@@ -88,27 +92,40 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 valid = True
         return valid
 
+    # @staticmethod
+    # def custom_sanitization(self, name):
+    #     return to_safe_group_name(name, replacer='')
+
     def parse(self, inventory, loader, path, cache=True):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
+
+        # self._sanitize_group_name = self.custom_sanitization
 
         config = self._read_config_data(path)
         strict = self.get_option("strict")
 
         input_file = csv.DictReader(open(config["source"]))
 
+        # For each entry in the CSV file
         for entry in input_file:
             hostvars = {}
             groups = []
 
-            if detect_range(entry["host"]):
-                hosts = expand_hostname_range(entry["host"])
+            # Expand hostname ranges, Example: vyos10[1:4]
+            if detect_range(entry["HostName"]):
+                hosts = expand_hostname_range(entry["HostName"])
             else:
-                hosts = [entry["host"]]
+                hosts = [entry["HostName"]]
 
+            # Will be a single host, or multiple hosts if a range
             for host in hosts:
-                self.inventory.add_host(host)
+                self.inventory.add_host(host) # Add the host to the inventory
+
+                # For each column in the CSV entry
+                # k = column name, v = column value
                 for k, v in entry.items():
-                    if k not in ["host", "tags"]:
+                    # If the column is not 'HostName', or additional Keys, add it to the hostvars
+                    if k not in ["HostName"]:
                         if v.startswith("vars:"):
                             varval = v.split("vars:")[1]
                             v = config["vars"].get(varval)
@@ -117,7 +134,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                         else:
                             add_key = k
                         hostvars[add_key] = v
-                    if k == "groups":
+
+                    # If the column is 'groups', split the value into a list
+                    if k == "AdditionalGroups":
                         groups = v.split(" ")
 
                 for k, v in config.get("defaults", {}).items():
@@ -127,6 +146,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
                 for k, v in hostvars.items():
                     self.inventory.set_variable(host, k, v)
 
+                # Create variables using Jinja2 expressions
                 self._set_composite_vars(
                     self.get_option("compose"), hostvars, host, strict=strict
                 )
